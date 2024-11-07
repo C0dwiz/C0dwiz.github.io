@@ -1,0 +1,80 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300&family=Roboto:wght@300&family=Ubuntu&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.profile img {
+    width: 150px;
+    height: 150px;
+    border-radius: 100%;
+    border: 5px solid white;
+    transition: all 0.4s ease-in-out;
+    cursor: pointer;
+}
+
+.container {
+    background-image: url(/image/hug.gif);
+    /* width: 1000px;
+    height: 200px; */
+    background-position: center;
+    background-size: cover;
+    margin: 0 auto;
+    height: 100vh;
+}
+
+.profile img:hover {
+    transform: scale(1.2);
+    box-shadow: 0px 0px 10px 10px rgb(255, 255, 255);
+}
+
+.profile {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    padding: 30px;
+    justify-content: center;
+
+}
+
+.profile h3 {
+    font-family: 'Roboto Mono', sans-serif;
+    font-style: bold;
+    color: white;
+    padding-top: 30px;
+    font-size: 1.2rem;
+}
+
+.list ul li {
+    display: flex;
+    flex-direction: column;
+    padding-top: 35px;
+    justify-content: center;
+    margin: 0 auto;
+    width: 50%;
+    height: 10%;
+    padding: 10px 0;
+}
+
+.list ul li a {
+    color: white;
+    font-size: 1.2rem;
+    font-family: 'Roboto Mono', sans-serif;
+    font-weight: 600;
+    text-decoration: none;
+    text-align: center;
+    margin: 5px 12px;
+    border: 3px solid white;
+    padding: 15px;
+    border-radius: 50px;
+}
+
+.list ul li a:hover {
+    background-color: rgba(233, 233, 233, .23);
+    box-shadow: 0 10px 40px 0 rgba(31, 38, 135, .37);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: none;
+}
