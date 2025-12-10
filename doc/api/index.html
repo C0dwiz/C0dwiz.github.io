@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="drtdi API docs, for the Dart programming language.">
+  <title>drtdi - Dart API docs</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="static-assets/github.css?v1">
+  <link rel="stylesheet" href="static-assets/styles.css?v1">
+  <link rel="icon" href="static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="https://github.com/c0dwiz/drtdi">drtdi package</a></li>
+  </ol>
+  <div class="self-name">drtdi</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
+</header>
+<main>
+  <div id="dartdoc-main-content" class="main-content">
+      
+<section class="desc markdown">
+  <h1 id="drtdi---dart-dependency-injection">DRTDI - Dart Dependency Injection</h1>
+<p><a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a>
+<a href="https://dart.dev"><img src="https://img.shields.io/badge/Dart-2.17%2B-blue" alt="Dart"></a>
+<a href="https://flutter.dev"><img src="https://img.shields.io/badge/Flutter-3.0%2B-blue" alt="Flutter"></a></p>
+<p>A lightweight, high-performance dependency injection container for Dart and Flutter with support for multiple lifecycles, scoping, and advanced features.</p>
+<h2 id="-features">🚀 Features</h2>
+<ul>
+<li><strong>🏗️ Multiple Lifecycles</strong> - Transient, Singleton, and Scoped dependencies</li>
+<li><strong>🔗 Hierarchical Containers</strong> - Parent-child container relationships</li>
+<li><strong>🎯 Constructor Injection</strong> - Automatic dependency resolution</li>
+<li><strong>🏷️ Keyed Registrations</strong> - Multiple implementations of the same interface</li>
+<li><strong>🎨 Decorators</strong> - Modify instances after creation</li>
+<li><strong>📦 Module System</strong> - Group related registrations</li>
+<li><strong>⚡ High Performance</strong> - Optimized for speed and memory usage</li>
+<li><strong>🧪 Container Validation</strong> - Detect configuration errors early</li>
+<li><strong>🔄 Disposable Support</strong> - Automatic resource cleanup</li>
+<li><strong>📱 Flutter Ready</strong> - Perfect for Flutter applications</li>
+</ul>
+<h2 id="-installation">📦 Installation</h2>
+<p>Add <code>drtdi</code> to your <code>pubspec.yaml</code>:</p>
+<pre class="language-yaml"><code class="language-yaml">dependencies:
+  drtdi: ^1.0.1
+</code></pre>
+<h2 id="-quick-start">🎯 Quick Start</h2>
+<h3 id="basic-usage">Basic Usage</h3>
+<pre class="language-dart"><code class="language-dart">import 'package:drtdi/drtdi.dart';
+
+void main() {
+  // Create container
+  final container = DIContainer();
+  
+  // Register dependencies
+  container.register&lt;ApiService&gt;((c) =&gt; ApiService(), 
+    lifecycle: Lifecycle.singleton);
+  container.register&lt;UserRepository&gt;((c) =&gt; UserRepository(c.resolve&lt;ApiService&gt;()));
+  container.register&lt;UserService&gt;((c) =&gt; UserService(c.resolve&lt;UserRepository&gt;()));
+  
+  // Resolve dependencies
+  final userService = container.resolve&lt;UserService&gt;();
+  
+  // Validate container configuration
+  container.validate();
+}
+</code></pre>
+<h3 id="flutter-integration">Flutter Integration</h3>
+<pre class="language-dart"><code class="language-dart">import 'package:flutter/material.dart';
+import 'package:drtdi/drtdi.dart';
+
+void main() {
+  final container = DIContainer();
+  
+  // Configure dependencies
+  container.register&lt;ApiService&gt;((c) =&gt; ApiService(), lifecycle: Lifecycle.singleton);
+  container.register&lt;UserRepository&gt;((c) =&gt; UserRepository(c.resolve&lt;ApiService&gt;()));
+  container.register&lt;UserBloc&gt;((c) =&gt; UserBloc(c.resolve&lt;UserRepository&gt;()));
+  
+  runApp(MyApp(container: container));
+}
+
+class MyApp extends StatelessWidget {
+  final DIContainer container;
+  
+  const MyApp({super.key, required this.container});
+  
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: ContainerProvider(
+        container: container,
+        child: const HomeScreen(),
+      ),
+    );
+  }
+}
+
+class ContainerProvider extends InheritedWidget {
+  final DIContainer container;
+  
+  const ContainerProvider({
+    super.key,
+    required this.container,
+    required super.child,
+  });
+  
+  static ContainerProvider of(BuildContext context) {
+    return context.dependOnInheritedWidgetOfExactType&lt;ContainerProvider&gt;()!;
+  }
+  
+  @override
+  bool updateShouldNotify(ContainerProvider oldWidget) =&gt; false;
+}
+
+extension ContainerContext on BuildContext {
+  DIContainer get container =&gt; ContainerProvider.of(this).container;
+}
+
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
+  
+  @override
+  Widget build(BuildContext context) {
+    final userBloc = context.container.resolve&lt;UserBloc&gt;();
+    
+    return Scaffold(
+      appBar: AppBar(title: const Text('DRTDI Example')),
+      body: Center(
+        child: ElevatedButton(
+          onPressed: () =&gt; userBloc.loadUsers(),
+          child: const Text('Load Users'),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h2 id="-lifecycles">📚 Lifecycles</h2>
+<h3 id="transient">Transient</h3>
+<p>New instance every time:</p>
+<pre class="language-dart"><code class="language-dart">container.register&lt;Service&gt;((c) =&gt; Service(), 
+  lifecycle: Lifecycle.transient);
+</code></pre>
+<h3 id="singleton">Singleton</h3>
+<p>Single instance per container:</p>
+<pre class="language-dart"><code class="language-dart">container.register&lt;Service&gt;((c) =&gt; Service(), 
+  lifecycle: Lifecycle.singleton);
+</code></pre>
+<h3 id="scoped">Scoped</h3>
+<p>Single instance per scope:</p>
+<pre class="language-dart"><code class="language-dart">container.register&lt;Service&gt;((c) =&gt; Service(), 
+  lifecycle: Lifecycle.scoped);
+
+final scope = container.createScope();
+final service = scope.resolve&lt;Service&gt;(); // New instance
+</code></pre>
+<h2 id="-keyed-registrations">🔑 Keyed Registrations</h2>
+<p>Register multiple implementations of the same interface:</p>
+<pre class="language-dart"><code class="language-dart">container.register&lt;Storage&gt;((c) =&gt; FileStorage(), key: 'file');
+container.register&lt;Storage&gt;((c) =&gt; CloudStorage(), key: 'cloud');
+
+final fileStorage = container.resolve&lt;Storage&gt;(key: 'file');
+final cloudStorage = container.resolve&lt;Storage&gt;(key: 'cloud');
+</code></pre>
+<h2 id="-decorators">🎨 Decorators</h2>
+<p>Modify instances after creation:</p>
+<pre class="language-dart"><code class="language-dart">container.addDecorator&lt;Service&gt;((service) {
+  print('Service created at ${DateTime.now()}');
+  return LoggingService(service);
+});
+</code></pre>
+<h2 id="-modules">📦 Modules</h2>
+<p>Group related registrations:</p>
+<pre class="language-dart"><code class="language-dart">class ApiModule implements DIModule {
+  @override
+  void configure(DIContainer container) {
+    container.register&lt;ApiClient&gt;((c) =&gt; ApiClient(), 
+      lifecycle: Lifecycle.singleton);
+    container.register&lt;UserApi&gt;((c) =&gt; UserApi(c.resolve&lt;ApiClient&gt;()));
+  }
+}
+
+// Use module
+container.addModule(ApiModule());
+</code></pre>
+<h2 id="-advanced-usage">🔧 Advanced Usage</h2>
+<h3 id="container-builder">Container Builder</h3>
+<p>Fluent API for container configuration:</p>
+<pre class="language-dart"><code class="language-dart">final container = ContainerBuilder()
+    .register&lt;Database&gt;((c) =&gt; Database())
+    .asSingleton()
+    .register&lt;UserRepository&gt;((c) =&gt; UserRepository(c.resolve&lt;Database&gt;()))
+    .asScoped()
+    .addModule(ApiModule())
+    .build();
+</code></pre>
+<h3 id="scoped-containers">Scoped Containers</h3>
+<pre class="language-dart"><code class="language-dart">final root = DIContainer();
+root.register&lt;Service&gt;((c) =&gt; Service(), lifecycle: Lifecycle.scoped);
+
+final scope1 = root.createScope();
+final scope2 = root.createScope();
+
+final service1 = scope1.resolve&lt;Service&gt;();
+final service2 = scope2.resolve&lt;Service&gt;();
+
+print(service1 == service2); // false - different scopes
+</code></pre>
+<h3 id="disposable-objects">Disposable Objects</h3>
+<pre class="language-dart"><code class="language-dart">class Database implements Disposable {
+  @override
+  void dispose() {
+    // Cleanup resources
+    print('Database disposed');
+  }
+}
+
+container.register&lt;Database&gt;((c) =&gt; Database(), 
+  lifecycle: Lifecycle.singleton);
+
+// Automatically disposed when container is disposed
+container.dispose();
+</code></pre>
+<h2 id="-performance">⚡ Performance</h2>
+<p>DRTDI is optimized for performance:</p>
+<pre class="language-dart"><code class="language-dart">// Benchmark Results
+SimpleTransient(RunTime): 3.984322354236861 us.
+DeepTransient(RunTime): 19.186531567342165 us.
+Singleton(RunTime): 4.195086666666667 us.
+MixedLifecycle(RunTime): 4.15242 us.
+ScopeCreation(RunTime): 11.840668376323931 us.
+</code></pre>
+<h2 id="-testing">🧪 Testing</h2>
+<p>Easy testing with dependency mocking:</p>
+<pre class="language-dart"><code class="language-dart">test('should test with mocked dependencies', () {
+  final container = DIContainer();
+  
+  // Register mock implementation
+  container.register&lt;ApiService&gt;((c) =&gt; MockApiService());
+  container.register&lt;UserRepository&gt;((c) =&gt; UserRepository(c.resolve&lt;ApiService&gt;()));
+  
+  final userRepository = container.resolve&lt;UserRepository&gt;();
+  
+  // Test with mocked dependencies
+  expect(userRepository, isA&lt;UserRepository&gt;());
+});
+</code></pre>
+<h2 id="-api-reference">🎯 API Reference</h2>
+<h3 id="core-classes">Core Classes</h3>
+<ul>
+<li><code>DIContainer</code> - Main dependency injection container</li>
+<li><code>ContainerScope</code> - Scoped container for isolated dependency graphs</li>
+<li><code>DependencyRegistration</code> - Individual dependency registration</li>
+<li><code>Lifecycle</code> - Lifecycle enum (Transient, Singleton, Scoped)</li>
+</ul>
+<h3 id="key-methods">Key Methods</h3>
+<ul>
+<li><code>register&lt;T&gt;()</code> - Register a dependency</li>
+<li><code>resolve&lt;T&gt;()</code> - Resolve a dependency</li>
+<li><code>resolveAll&lt;T&gt;()</code> - Resolve all implementations of a type</li>
+<li><code>createScope()</code> - Create a scoped container</li>
+<li><code>addModule()</code> - Add a configuration module</li>
+<li><code>validate()</code> - Validate container configuration</li>
+<li><code>dispose()</code> - Clean up resources</li>
+</ul>
+<h2 id="-error-handling">🔍 Error Handling</h2>
+<p>DRTDI provides clear error messages:</p>
+<pre class="language-dart"><code class="language-dart">try {
+  container.resolve&lt;UnregisteredService&gt;();
+} on RegistrationNotFoundException catch (e) {
+  print(e.message); // "No registration found for type UnregisteredService"
+}
+
+try {
+  container.resolve&lt;ServiceA&gt;(); // ServiceA depends on ServiceB which depends on ServiceA
+} on CircularDependencyException catch (e) {
+  print(e.message); // "Circular dependency detected: ServiceA -&gt; ServiceB -&gt; ServiceA"
+}
+</code></pre>
+<h2 id="-contributing">🤝 Contributing</h2>
+<p>We welcome contributions! Please see our <a href="CONTRIBUTING.md">Contributing Guide</a> for details.</p>
+<h3 id="development">Development</h3>
+<pre class="language-bash"><code class="language-bash"># Clone repository
+git clone https://github.com/c0dwiz/drtdi.git
+
+# Run tests
+flutter test
+
+# Run benchmarks
+dart benchmark/performance_benchmark.dart
+
+# Run examples
+dart example/basic_usage.dart
+</code></pre>
+<h2 id="-license">📄 License</h2>
+<p>DRTDI is licensed under the MIT License. See <a href="LICENSE">LICENSE</a> for details.</p>
+<h2 id="-acknowledgments">🙏 Acknowledgments</h2>
+<p>Thanks to all contributors and the Dart/Flutter community for inspiration and support.</p>
+<hr>
+<div align="center">
+<p><strong>Built with ❤️ for the Dart and Flutter community</strong></p>
+<p><a href="https://github.com/c0dwiz/drtdi/wiki">📖 Documentation (Soon)</a> •
+<a href="https://github.com/c0dwiz/drtdi/issues">🐛 Report Bug</a> •
+<a href="https://github.com/c0dwiz/drtdi/issues">💡 Request Feature</a></p>
+</div>
+</section>
+
+
+      <section class="summary">
+          <h2>Libraries</h2>
+        <dl>
+          <dt id="drtdi">
+  <span class="name"><a href="drtdi/">drtdi</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+        </dl>
+      </section>
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="https://github.com/c0dwiz/drtdi">drtdi package</a></li>
+</ol>
+
+    <h5 class="hidden-xs"><span class="package-name">drtdi</span> <span class="package-kind">package</span></h5>
+    <ol>
+      <li class="section-title">Libraries</li>
+      <li><a href="drtdi/">drtdi</a></li>
+</ol>
+
+  </div>
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div>
+</main>
+<footer>
+  <span class="no-break">
+    drtdi
+      1.0.1
+  </span>
+  
+</footer>
+
+
+<script src="static-assets/highlight.pack.js?v1"></script>
+<script src="static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+
